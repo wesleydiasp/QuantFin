@@ -1,0 +1,40 @@
+import pandas as pd
+import pandas_datareader.data as web
+import yfinance as yf
+from functools import reduce
+yf.pdr_override()
+
+'''This program look to get financial data from yahoo finance and then process it and yield a covariance matrix among the stocks inputed (SA market)'''
+
+def rent(x, name = 'NaN', index='Date'): #make the dfs from yf a return dataframe
+    lis = list()
+    lis[:]
+    date = list()
+    date[:]
+    for i in range(x.shape[0]-1):
+        lis.append((x['Close'][i+1]-x['Close'][i])/(x['Close'][i]))
+        date.append(x.index[i+1])
+    ret = pd.DataFrame(data = lis, index=date, columns = [name])
+    ret.index.name = index
+    return ret
+
+def askshares(): #here the user can fill with his infos
+    n = input('Insira a quantidade de ativos: ')
+    stocks = list()
+    names=list()
+    for i in range(int(n)):
+        names.append(input('Insira um ticker'))
+        stocks.append(web.get_data_yahoo(names[i]+'.SA'))
+    return stocks, names #stocks is a list of df returned by each ticker informed 
+
+def covar():
+    l = askshares()
+    data = list()
+    for i in range(len(l[1])):
+        data.append(rent(l[0][i], name = l[1][i]))
+    df_merged = reduce(lambda  left,right: pd.merge(left,right,on=['Date']), data) #merge a number x of dfs in just one row
+    li = df_merged.columns
+    cov = df_merged.cov().loc[li,li]
+    return cov
+
+covar()
