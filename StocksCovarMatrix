@@ -4,7 +4,7 @@ import yfinance as yf
 from functools import reduce
 yf.pdr_override()
 
-'''This program look to get financial data from yahoo finance and then process it and yield a covariance matrix among the stocks inputed (SA market)'''
+'''This program look to get financial data from yahoo finance, process it and yield a covariance matrix among the stocks inputed (SA market)'''
 
 def rent(x, name = 'NaN', index='Date'): #make the dfs from yf a return dataframe
     lis = list()
